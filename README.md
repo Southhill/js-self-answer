@@ -13,5 +13,5 @@ obj = [] // 错误操作，会报错
 ```
 以上代码看似对`obj`变量进行了新的赋值操作，但实际上该变量的引用并没有变化，所以是正确的操作。而对于基本类型的值，变量拿到的是确确实实的值，而不是引用地址，要想改变其值，只能重新赋值，对于`const`关键字声明的基本类型的值，则会报错。  
 
-Q: 为什么在全局环境下访问一个不存在的变量`a`时，直接访问`a`会报错*ReferenceError: a is not defined*，而访问`window.a`则会得到`undefined`，并不抛出错误？
+Q: 为什么在全局环境下访问一个不存在的变量`a`时，直接访问`a`会报错*ReferenceError: a is not defined*，而访问`window.a`则会得到`undefined`，并不抛出错误？  
 A: waiting answer...
