@@ -2,9 +2,14 @@
 
 ## 待解决
 - 如何处理nodejs应用的状态管理（全局变量）
-- 访问`window.a`,返回`undefined`，但如果直接访问变量`a`，则报错：`Uncaught ReferenceError: a is not defined`，为什么？
-- 在使用Vue的`mixin`特性时，一个`mixin`文件a中需要使用另一个`mixin`文件b的method，怎么检测b文件的依赖已经被主文件引入？（不能暴力的在当前a文件下使用`mixin`特性引入b文件，禁止套娃[雾]）
-
+- 在使用Vue的`mixin`特性时，一个`mixin`文件a中需要使用另一个`mixin`文件b的method，怎么检测b文件的依赖已经被主文件引入？（不能暴力的在当前a文件下使用`mixin`特性引入b文件）
+- 在axios库中，添加多个请求拦截器，但是在执行请求拦截器操作时，先添加的拦截器会后执行，为什么不在处理拦截器时对请求拦截器数组反转，以达到人类可认知的用法，不这样做的考虑是什么？
+- 在Vue单文件组件中，如何控制方法只执行一次？
+- Vue的表单生成器设计中，如何在编写schema的时候获取到该表单生成器运行时的信息？
+- 如何为react写内建的组件：Hidden, Switch, Match?
+- HTTP 是一个建立在 TCP 之上的应用层协议。，然而TCP是一个有状态的协议，为什么HTTP会被称为无状态的协议？
+- LHS 和 RHS 的区别?
+---
 ## 已解决
 Q：有以下代码：`var b`，当判断变量`b`的值是否为`undefined`时，为什么我们应该使用`typeof b === 'undefined'`，而不推荐使用`b === undefined`?  
 A：在非严格模式下，我们可以为全局标识符`undefined`赋值，比如：`undefinded = 2`，这时用`b === undefined`判断的结果并不正确，所以推荐使用`typeof b === 'undefined'`， 顺便一提，`null`是一个特殊关键字，不是标识符，却不能将其当做变量来使用和赋值。  
@@ -58,3 +63,33 @@ A:  因为`data`是一个引用类型的变量，而在`res.data.forEach`的迭�
 
 Q:  如何在浏览器环境下设计一个简单的文本摘要算法？  
 A:  [设计一个简单的[JS]文本摘要算法](https://blog.csdn.net/ccaoee/article/details/102810150)，大致思路是：加盐->获取到每个字符的码点然后做凯撒字符偏移->将处理后的码点转为2进制->分块->以块为单位转为16进制->将16进制原始字符数据返回
+
+Q: 有以下代码：
+```js
+function Promise(executor) {
+    if (!(this instanceof Promise)) {
+        throw new TypeError(`${this} is not a promise`)
+    }
+}
+```
+这段代码在什么情况下才会执行报错？
+A: 
+在将`Promise`构造函数当成一个普通的函数进行调用时？`(this instanceof Promise)`的值为`false`。因此，此时将会进入抛出错误的代码分支中。
+
+**Q**: 在使用Vue的extends关键字时，父组件的watch中使用字符串的形式去写handler方法，然后在子组件中重写相应的方法，为什么watch回调函数还是会先执行父组件的函数，然后执行子组件的函数？
+
+**A**: [vue文档](https://vue.docschina.org/v2/guide/mixins.html#%E9%80%89%E9%A1%B9%E5%90%88%E5%B9%B6-option-merging)中有内容：
+> 具有相同名称的钩子函数，将合并到一个数组中，最终它们会被依次调用。此外，需要注意，mixin 对象中的同名钩子函数，会在组件自身的钩子函数之前调用。
+猜测此时的watch回调函数的合并策略应该被对待为钩子函数
+
+**Q**: 访问`window.a`,返回`undefined`，但如果直接访问变量`a`，则报错：`Uncaught ReferenceError: a is not defined`，为什么？(同问：在控制台下执行 `var a = 233` 发生了什么事情？)
+
+**A**: 
+> 如果一个标识符不声明变量，那么它就不是变量
+>定义在全局中的属性和直接挂载在window上面还是有一定的区别。挂载在window上面的属性可以通过delete操作符进行删除，而直接定义在全局中的变量是无法通过delete操作符进行删除的。这是因为在全局中声明的属性其属性特性中有[[Configurable]]特性，其值为false,所以这样的值是无法通过delete操作符进行删除掉的。
+>当我们使用访问一个没有声明的变量时，JS会报错；而当我们给一个没有声明的变量赋值时，JS不会报错，相反它会认为我们是要隐式声明一个全局变量
+
+window对象是JavaScript默认自带的对象，它是存在的，只不过是window对象中的属性a是不存在的。
+ 但是如果你想打印a，那么a会认为是一个变量， a 并没有定义，所以会捕获一个引用异常。
+这两种结果的主要原因是因为window对象是默认存在的对象
+![截图](https://cdn.nlark.com/yuque/0/2021/png/266104/1610621262511-8926e464-1464-4dcb-91c4-5c96d3d79498.png?x-oss-process=image%2Fresize%2Cw_746)
