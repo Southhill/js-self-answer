@@ -27,7 +27,7 @@ obj = [] // 错误操作，会报错
 ```javascript
 var reg = /^\.\/.+\.(?!less|md)$/i
 ```
-在使用`require.context`方法时，该正则表达式不能达到排除less,md文件，只选择其他文件的功能。    
+在使用`require.context`方法时，为什么该正则表达式不能达到排除less,md文件，只选择其他文件的功能。    
 **A**: 原因是语法`x(?!y)`匹配项并不包含`y`的值，而该正则在*负向后瞻*后紧跟了$ end标识符，从而匹配失败。所以需要注意负向后瞻与$结束符的配合使用
 
 **Q**:  有某不定项的数组，会被渲染为li元素，渲染规则为：三个为一组，渲染为一行，依行渲染，最后剩余项渲染为一行。  
@@ -58,8 +58,7 @@ getCascade(context) {
 }
 ```
 报错：*Error: [vuex] Do not mutate vuex store state outside mutation handlers.*，为什么会报错？    
-**A**:  因为`data`是一个引用类型的变量，而在`res.data.forEach`的迭代回调中，每次执行`context.commit`都使用同一个`data`对象，而从第二次迭代开始，`data.push`语法会改变`data`的值，隐式的使得`state`中的`data`发生变化，而这种变化不是由mutation引发的，所以会报如此错误。  
-另说，在`forEach`中执行`context.commit`语法真是一种愚蠢的写法，正确的做法是把`context.commit`语法放到`forEach`迭代结束后执行。
+**A**:  因为`data`是一个引用类型的变量，而在`res.data.forEach`的迭代回调中，每次执行`context.commit`都使用同一个`data`对象，而从第二次迭代开始，`data.push`语法会改变`data`的值，隐式的使得`state`中的`data`发生变化，而这种变化不是由mutation引发的，所以会报如此错误，正确的做法是把`context.commit`语法放到`forEach`迭代结束后执行。
 
 **Q**:  如何在浏览器环境下设计一个简单的文本摘要算法？  
 **A**:  [设计一个简单的[JS]文本摘要算法](https://blog.csdn.net/ccaoee/article/details/102810150)，大致思路是：加盐->获取到每个字符的码点然后做凯撒字符偏移->将处理后的码点转为2进制->分块->以块为单位转为16进制->将16进制原始字符数据返回
@@ -90,6 +89,6 @@ function Promise(executor) {
 >当我们使用访问一个没有声明的变量时，JS会报错；而当我们给一个没有声明的变量赋值时，JS不会报错，相反它会认为我们是要隐式声明一个全局变量
 
 window对象是JavaScript默认自带的对象，它是存在的，只不过是window对象中的属性a是不存在的。
- 但是如果你想打印a，那么a会认为是一个变量， a 并没有定义，所以会捕获一个引用异常。
+ 但是**如果你想打印a，那么a会认为是一个变量， a 并没有定义，所以会捕获一个引用异常。**
 这两种结果的主要原因是因为window对象是默认存在的对象
 ![截图](https://cdn.nlark.com/yuque/0/2021/png/266104/1610621262511-8926e464-1464-4dcb-91c4-5c96d3d79498.png?x-oss-process=image%2Fresize%2Cw_746)
